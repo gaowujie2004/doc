@@ -436,11 +436,15 @@ currenttime,   这个
 
 ​				日期选择,   选择哪个日期, 就显示哪个日期的订单.  
 
-   			 月选择 , 选择哪个月就显示哪个月的订单   
+   			 月选择 , 选择哪个月就显示哪个月的订单  
 
-​	URL： /order?sid=xxxx&type=month&month=12
+​				日期段查询 ，
 
-​				/order?sid=xxxx&type=day&date=2020-3-2
+​	URL： /order?sid=xxxx&type=month&time=12
+
+​				/order?sid=xxxx&type=date&time=2020-3-2
+
+​				/order?sid=xxxxx&type=range & start=2020-10-12 23:00:00& end=2020-10-13 24:00:00
 
 ​	方法： GET
 
@@ -462,9 +466,9 @@ currenttime,   这个
 
 
 // 优先考虑
-[
+[	// 按照 name 菜名分类
 	{
-		type: '黑椒鸡柳饭',
+		name: '黑椒鸡柳饭',
 		list: [
 			{mid：‘’， time： ‘’},
             {},
