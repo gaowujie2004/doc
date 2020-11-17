@@ -612,7 +612,7 @@ currenttime,   这个
 
 ## 评论管理
 
-朱遇贵    张磊
+张磊
 
 ### 	查看
 
@@ -627,11 +627,13 @@ currenttime,   这个
 ```javascript
 [
     {
-        content: 'xxxxxx',
+        unickname: '',  // 用户昵称,   -- 用户信息
+        uimg: '用户头像URL'            -- 用户信息
+        imgList: ['htp://', 'http://'], // 先不做图片 JSON
         score: 3.5,
-        imgList: ['htp://', 'http://'], // 先不做图片
-        sid: ,
-        time: '...',
+       	content: 'xxxxxx',
+        response: 'xxx'
+        time: '自动的',
     },
     {
         
@@ -641,6 +643,12 @@ currenttime,   这个
 ```
 
 
+
+​	**数据表**
+
+```
+
+```
 
 
 
@@ -654,9 +662,11 @@ currenttime,   这个
 
 ​		方法： POST
 
-​		参数： sid=xxx&uid=xxx&response=xxxxxxxxxxxx
+​		参数： **id**=xxxx&response=xxxxxxxxxxxx    id 是 评论表 的主键ID,  字段是 _id   
 
 ​		返回： 字符串1 回复成功，0遇到错误
+
+​		说明:	需要对 response 限制 50个字符.
 
 
 
