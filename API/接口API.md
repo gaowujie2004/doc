@@ -121,7 +121,7 @@
 
 ## 我的订单
 
-​	这个应该 放到  , 我想做的显眼一点.   |    商讨一下吧
+​	这个应该 放到  我的, 我想做的显眼一点.   |    商讨一下吧
 
 
 
@@ -131,15 +131,28 @@
 
 ​	URL：	/order
 
-​	参数:	uid=xxx
+​	参数:	uid=xxx 用户ID
 
 ​	方法: 	GET
 
-​	
+​	返回示例:	结构类似于 商家版-订单管理
 
-### 取消预约
+```javascript
+[
+    {
+        name: '黑椒鸡柳', 菜名
+        list: {
+        	
+    	}
+    }
+]
+```
 
-​	概括:	删除当前的订单,  需要做个判断,   大于1小时 不能删除.
+
+
+### 取消预定
+
+​	概括:	删除当前的订单,  需要做个判断,   大于**1小时** 不能删除.
 
 ​	URL:	/order/remove?_id=xxxx
 
@@ -177,11 +190,11 @@
 
 ### 登录
 
-​	URL: 	/user/login?uname=xxxx&upwd=xxxxx
+​	URL: 	/user/login
 
 ​	方法: 	POST
 
-​	参数: uname , upwd
+​	参数: uname=xxxx&upwd=xxxxx
 
 ```javascript
 {
@@ -218,13 +231,19 @@
 
 ​	概括:	就是注册功能的本质
 
-​	URL:	/user/sigin?uname=xxxxx&upwd=xxxxxx
+​	URL:	/user/sigin
 
 ​	方法:	POST
+
+​	参数:	uname=xxxxx&upwd=xxxxxx
 
 ​	返回:	字符串 1代表插入成功(注册成功),    0代表账号或密码不符合要求
 
 ​	安全：	为了安全起见， 把 uname 设置为 唯一约束
+
+
+
+
 
 
 
@@ -579,7 +598,6 @@ currenttime,   这个
         imgList: ['htp://', 'http://'], // 先不做图片
         sid: ,
         time: '...',
-        
     },
     {
         
