@@ -186,35 +186,107 @@
 
 ## 详情页
 
-### 	点赞
+浏览数
+
+### 	点赞功能
 
 ​		概括：	点赞。因为是 放入数据，所以用POST
 
-​		URL：	/detail/top
+​		URL：	/detail/like
 
 ​		方法：	POST
 
 ​		参数：	sid=xxxxlike=true|false&  商家ID
 
-​		说明， like=true | false
+​		说明， like=true | false   true说明 是点赞.   false 说明取消点赞   。注意这时  字符串
 
+​		
 
+​		数据表：  新建一个 shop_like 表
+
+​		还有一种思路是， 这个路由里，然后更新 商家表中的相关字段。
 
 ### 	头部
 
-​		概括：	商家标题、评分、评价人数、点赞人数、展示图片、餐厅。因为是拿数据  所以用GET，语义明确
+​		概括：	商家名、评分、评价人数、点赞人数、是否点赞、展示图片、餐厅。因为是拿数据  所以用GET，语义明确。
 
-​		URL：	/detail/top?sid=xxxxx
+​		URL：	/detail/top?sid=xxxxx & uid=xxxx
 
 ​		方法：	GET
 
-​		参数：	sid=xxxx
+​		参数：	sid=xxxx & uid=xxx
+
+​		依赖：    评论表、商家后台
+
+​		返回示例： 
+
+```javascript
+[
+    {
+        shopname: '天下好面',
+        score:   '评分'                // shop_comment 表
+        commentNum: '评论人数'          // shop_comment
+        isLike:  1|0                    // 是否点赞  // shop_like
+        showList: ['http://', 'http://']    // shop_show
+		canteen：  '哪个餐厅'
+    }
+]
+```
+
+可以在  商家表， 加些字段    评分、评价人数、点赞人数、展示图片字段
+
+但是这样做， 就需要再其他路由 操作的时候，进行 修改。
+
+综上考虑，我决定 不用这种 耦合度高的了。
 
 
 
-### 	预定
+### 菜品展示
 
-​		
+​	概括：	用来获取 商家的菜品列表
+
+​	URL：	/detail/menu？sid=xxx
+
+​	方法：	GET
+
+​	返回示例：	
+
+```javascript
+[
+    {
+        mname: '菜名',
+        mprice: '价格',
+        mimg: '菜的图片URL'
+        mid： 
+    }
+]
+```
+
+​	注意：	只取 上架的菜品
+
+​	
+
+### 	预定[功能]
+
+​	shop_order 表
+
+
+
+### 取消预定
+
+​	返回： 200，说明取消预约成功
+
+​	返回： 400， 说明时间超时
+
+​		返回 500，说明程序出错
+
+
+
+### 评论展示
+
+​	获取评论
+
+### 评论[功能]
 
 
 
@@ -616,7 +688,7 @@ currenttime,   这个
 
 ### 	查看
 
-​		URL： /comment
+​		URL： /comment?sid=xxx
 
 ​		方法： GET
 
