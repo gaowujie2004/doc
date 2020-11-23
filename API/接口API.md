@@ -14,13 +14,24 @@
 
 ```javascript
 [
+    {
+        sid: '商家ID',        ok
+        logo：‘商家图片’,      ok
+        shopname: '店名',     ok
+        score: '商家平均得分',  
+        category: 最多两个     
+        canteen： ‘餐厅’，     ok
+        slogan： ‘标语’，      ok
+        reserveNum： ‘预定量’   2
+    },
     {},
     {},
-    ......
 ]
 ```
 
 ​	另外操作:    字符串去除首尾空格,  插入 search 表中，用于做 热搜
+
+​	， 去 shop_category  shop_menu 表中找
 
 ### 热搜
 
@@ -91,6 +102,8 @@
 ​	返回示例：
 
 ​	待修改 ！！！
+
+​	预定流程:   注册/登录   ->   选择商家   ->  预定.
 
 ​			
 
@@ -174,51 +187,137 @@
 
 
 
-
-
 ## 我的
 
-​	
 
 
+### 	设置头像
+
+​	概括：	设置用户头像。
+
+​	URL：	/profile/img
+
+​	参数：	src=xxxxx
+
+​	方法：	POST
+
+​	返回：	字符串1，成功；字符串0失败
+
+
+
+### 	昵称
+
+​	概括:	更改昵称
+
+​	URL:	 /profile/nickname
+
+​	参数：   newname=xxx
+
+​	方法：	POST
+
+​	返回：	字符串1成功；字符串0失败
+
+### 	收藏
+
+​	概括:	获取用户的 收藏
+
+​	URL:	/profile/like
+
+​	参数：	uid=xxx
+
+​	方法:	POST
+
+​	返回示例:	
+
+```
+[
+	{
+		商家列表的结构
+	},
+	{},
+	{},
+]
+```
+
+
+
+### 	更改密码
+
+​	概括:	原密码，新密码
+
+​	方法:	POST
+
+​	URL：	/profile/pwd
+
+​	参数：	uid=xxx&pwd=xxx&newpwd=xxxxx
+
+​	返回：	字符串1，修改成功。 0修改失败
+
+
+
+### 	退出登录
+
+​	概括:	就是退出登录呀
+
+​	URL:	/profile/exit?sid
+
+​	方法:	GET
+
+​	返回:	字符串 1，退出成功； 字符串0失败
 
 
 
 ## 详情页
 
-浏览数
+### 详情页
+
+​	概述：	进入详情页 
+
+​	URL：	/detail/？sid
+
+​	
+
+### 收藏功能
+
+​	URL：	/detail/collect？uid=xx & sid=xxx
+
+​	方法：	POST
+
+​	参数：	？uid=xx & sid=xxx
+
+​	返回：	字符串1， 收藏成功； 字符串0未知错误 500； 字符串-1 400请登录
 
 ### 	点赞功能
 
-​		概括：	点赞。因为是 放入数据，所以用POST
+​	概括：	点赞。因为是 放入数据，所以用POST
 
-​		URL：	/detail/like
+​	URL：	/detail/like
 
-​		方法：	POST
+​	方法：	POST
 
-​		参数：	sid=xxxxlike=true|false&  商家ID
+​	参数：	sid=xxxxlike=true|false&  商家ID
 
-​		说明， like=true | false   true说明 是点赞.   false 说明取消点赞   。注意这时  字符串
+​	说明， like=true | false   true说明 是点赞.   false 说明取消点赞   。注意这时  字符串
 
 ​		
 
-​		数据表：  新建一个 shop_like 表
+​	数据表：  新建一个 shop_like 表
 
-​		还有一种思路是， 这个路由里，然后更新 商家表中的相关字段。
+​	还有一种思路是， 这个路由里，然后更新 商家表中的相关字段。
 
 ### 	头部
 
-​		概括：	商家名、评分、评价人数、点赞人数、是否点赞、展示图片、餐厅。因为是拿数据  所以用GET，语义明确。
+​	概括：	商家名、评分、评价人数、点赞人数、是否点赞、是否收藏、展示图片、餐厅。因为是拿数据  所以用GET，语义明确。
 
-​		URL：	/detail/top?sid=xxxxx & uid=xxxx
+​	URL：	/detail/top?sid=xxxxx & uid=xxxx
 
-​		方法：	GET
+​	方法：	GET
 
-​		参数：	sid=xxxx & uid=xxx
+​	参数：	sid=xxxx & uid=xxx
 
-​		依赖：    评论表、商家后台
+​	依赖：    评论表、商家后台
 
-​		返回示例： 
+​	返回示例： 
 
 ```javascript
 [
@@ -227,6 +326,7 @@
         score:   '评分'                // shop_comment 表
         commentNum: '评论人数'          // shop_comment
         isLike:  1|0                    // 是否点赞  // shop_like
+        isCollect: 1|0                  // 是否收藏
         showList: ['http://', 'http://']    // shop_show
 		canteen：  '哪个餐厅'
     }
@@ -284,13 +384,60 @@
 
 ### 评论展示
 
-​	获取评论
+​	概述：	获取评论
+
+​	URL：	/detail/comment？sid=xxx
+
+​	方法：	GET
+
+​	返回：	
+
+```javascript
+{
+    totalNum: 450, // 中评价人数
+    goodNum: 400, // 好评
+    middleNum: 10, // 中评
+    badNum: 5 // 差评
+    list: [
+        {
+            img: '用户头像',
+            nickname: '用户昵称',
+            time: '评论时间'，
+            score: '评分',
+            content: '内容',
+            imglist: '评论的图片列表'
+        },
+
+        {
+            一样的
+        },
+
+        ......
+    ]
+}
+```
+
+​	不足之处：	没有加分页功能，
 
 ### 评论[功能]
 
+​	概括:	学生端用来发表评论的接口
+
+​	URL:	/comment?sid=xxxx & uid=xxx
+
+​	参数:	 comment=xxxx & **imglist**=二进制  必须得用 content-type: multipart/form-data
+
+​	方法:	POST
 
 
 
+​	不足:	用户上传的图片大小，没有做限制。
+
+​	返回： 500错误， 图片过大 ， 不超过 5MB 或者 程序有误。
+
+
+
+​	
 
 ## 账号
 
