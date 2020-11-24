@@ -12,6 +12,12 @@
 
 ​	返回示例:      返回的跟商家列表的很像
 
+
+
+​	元素 和 标签的区别,  在多数情况下, 我们认为他们是一样的.
+
+​	如果硬要找出
+
 ```javascript
 [
     {
@@ -19,7 +25,7 @@
         logo：‘商家图片’,      ok
         shopname: '店名',     ok
         score: '商家平均得分',  
-        category: 最多两个     
+        category: 最多两个      
         canteen： ‘餐厅’，     ok
         slogan： ‘标语’，      ok
         reserveNum： ‘预定量’   2
@@ -31,7 +37,11 @@
 
 ​	另外操作:    字符串去除首尾空格,  插入 search 表中，用于做 热搜
 
-​	， 去 shop_category  shop_menu 表中找
+​	， 去 shop_category  shop_menu 表中找.
+
+​	背后的逻辑是:   查找 shopname \  content (shop_category)  然后以 sid 分组. 目的是防止重复.
+
+ 
 
 ### 热搜
 
@@ -89,23 +99,40 @@
 
 ​	逻辑提示:	去 shop_category表中 模糊查询，还有去
 
+​	用  /home/search?text=xxx  这个  不行.  因为有多个 
+
+​	写的  乱!!!
+
 
 
 ### 预定 TOP榜
 
 ​	URL:	/home/reservetop
 
-​	方法: GET
+​	方法:  GET
 
 ​	参数： 无
 
 ​	返回示例：
 
+```javascript
+[
+    {},    // 商品列表里的东西
+    {},
+    ......
+]
+    
+
+// 
+```
+
+
+
 ​	待修改 ！！！
 
 ​	预定流程:   注册/登录   ->   选择商家   ->  预定.
 
-​			
+
 
 ### 商家列表
 
@@ -129,6 +156,8 @@
     ......
 ]
 ```
+
+​	来个分页吧。
 
 
 
@@ -935,3 +964,6 @@ currenttime,   这个
 ​	`标语`, `展示图片` , `logo` , `分类关键字`
 
 ​	商家信息不涉及删除。
+
+
+
