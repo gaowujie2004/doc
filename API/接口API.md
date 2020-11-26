@@ -1,6 +1,6 @@
 # 顾客版
 
-## 首页
+## 首页 ok
 
 ### 搜索
 
@@ -16,7 +16,7 @@
 
 ​	元素 和 标签的区别,  在多数情况下, 我们认为他们是一样的.
 
-​	如果硬要找出
+​	如果硬要找出.    元素相对比较光一点 , 包括标签名呀  ,  属性 和属性值.  标签的感觉旧相对来说 更窄一些,  就是指 div  h1 p 这些
 
 ```javascript
 [
@@ -37,7 +37,7 @@
 
 ​	另外操作:    字符串去除首尾空格,  插入 search 表中，用于做 热搜
 
-​	， 去 shop_category  shop_menu 表中找.
+​	， 去 shop_category  shop_menu 表中找.   都没有找到去,   商家表中 找店名
 
 ​	背后的逻辑是:   查找 shopname \  content (shop_category)  然后以 sid 分组. 目的是防止重复.
 
@@ -76,11 +76,11 @@
 
 
 
-### 分类
+### 分类  
 
-​	URL:	/home/category?cate=xxxx
+​	URL:	/home/category?cate=xxxx | canteen=xxxx
 
-​	参数: 	cate=xxx
+​	参数: 	cate=xxx | canteen=西西里
 
 ​	方法:	GET
 
@@ -103,9 +103,11 @@
 
 ​	写的  乱!!!
 
+​	**SQL** 写的很垃圾，怎么联查  聚合表？
 
 
-### 预定 TOP榜
+
+### 预定 TOP榜 [本月]   
 
 ​	URL:	/home/reservetop
 
@@ -134,13 +136,17 @@
 
 
 
-### 商家列表
+### 商家列表  
 
 ​	URL:	/home/shoplist
 
 ​	方法:	GET
 
-​	参数： 无
+​	参数： page=xx & num=xxxx & order=xxx & direction=xxx
+
+​	参数说明:  page, 第几页     num,每页多少条数据。他们都有默认值， 1，10
+
+​						order，指定排序的字段默认没有、 direction，字段是升序还是降序 默认升序
 
 ​	返回示例:
 
@@ -157,13 +163,13 @@
 ]
 ```
 
-​	来个分页吧。
+​	
 
 
 
-## 我的订单
+## 我的订单 ok
 
-​	这个应该 放到  我的, 我想做的显眼一点.   |    商讨一下吧
+​	这个应该 放到  我的, 我想做的显眼一点.   |    还是做成  购物车呢？
 
 
 
@@ -173,50 +179,53 @@
 
 ​	URL：	/order
 
-​	参数:	uid=xxx 用户ID
+​	参数:	uid=xxx 用户ID    & page=1 & num=5
 
 ​	方法: 	GET
 
 ​	返回示例:	结构类似于 商家版-订单管理 
 
+​	isremove    是否能取消预约？
+
 ```javascript
-[	// 按照 name 菜名分类
-	{
-		name: '黑椒鸡柳饭',
-		list: [
-			{
-                "id": 34,
-                "price": 10,
-                "time": "2020-10-08T01:34:00.000Z",
-                "uname": "TEST用户名"
-            },
-            {},
-            .....
-		]
-	},
-	{
-		name： ‘’
-	}
+[	  
+    “sid”：          // 点击订单， 进入对应的详情页
+	"id": 34,       // 订单ID
+    "price": 10,
+    "time": "2020-10-08T01:34:00.000Z",  
+    "mname": ‘菜名’，
+    "shopname":  '商家名'
+    "canteen": '餐厅'
 ]
 ```
 
 
 
-### 取消预定
-
-​	概括:	删除当前的订单,  需要做个判断,   大于**1小时** 不能删除.
-
-​	URL:	/order/remove?_id=xxxx
-
-​	参数	_id=xxx    _id 是那个  shop_order _id字段
-
-​	方法:	GET
-
-​	返回:   字符串1表示取消成功,      字符串0表示  时间超时 就是超过一个小时了.  
 
 
+### 取消预约
 
-## 我的
+​	概括:	删除当前的订单,  需要做个判断,   大于**3小时** 不能删除.           
+
+​	URL:	/order/remove?id=xxxx
+
+​	参数	id=xxx    _id 是那个  shop_order _id字段
+
+​	方法:	POST
+
+​	返回:   字符串1表示取消成功,      字符串0表示  时间超时 就是超过3小时了.  
+
+
+
+​	返回： 200，说明取消预约成功
+
+​	返回： 400， 说明时间超时
+
+​		返回 500，说明程序出错
+
+
+
+## 我的 ok
 
 
 
@@ -224,9 +233,9 @@
 
 ​	概括：	设置用户头像。
 
-​	URL：	/profile/img
+​	URL：	/profile/img?src=xxx & uid=xxx
 
-​	参数：	src=xxxxx
+​	参数：	src=xxxxx  uid=xxxx    src 是图片的编号
 
 ​	方法：	POST
 
@@ -238,30 +247,33 @@
 
 ​	概括:	更改昵称
 
-​	URL:	 /profile/nickname
+​	URL:	 /profile/nickname ？ name=xxx & uid=xxx
 
-​	参数：   newname=xxx
+​	参数：   name=xxx & uid=xxx    URL传参
 
 ​	方法：	POST
 
-​	返回：	字符串1成功；字符串0失败
+​	返回：	字符串1成功；字符串0失败（昵称不符合要求 6个字符）
 
-### 	收藏
+### 	收藏 
 
 ​	概括:	获取用户的 收藏
 
-​	URL:	/profile/like
+​	URL:	/profile/like ？uid=xxx
 
 ​	参数：	uid=xxx
 
-​	方法:	POST
+​	方法:	GET
 
 ​	返回示例:	
 
 ```
 [
 	{
-		商家列表的结构
+		sid,
+		slogo，
+		shopname,
+		scanteen
 	},
 	{},
 	{},
@@ -270,7 +282,11 @@
 
 
 
-### 	更改密码
+### 我的订单
+
+
+
+### 	更改密码 
 
 ​	概括:	原密码，新密码
 
@@ -280,33 +296,39 @@
 
 ​	参数：	uid=xxx&pwd=xxx&newpwd=xxxxx
 
-​	返回：	字符串1，修改成功。 0修改失败
+​	返回：	字符串1，修改成功。 0修改失败（旧密码错误）   -1 就是新的密码不符合规范
+
+其他情况就是  服务器报错了。
 
 
 
-### 	退出登录
+​	密码要求， 6-20未字符。
+
+### 	退出登录 
 
 ​	概括:	就是退出登录呀
 
-​	URL:	/profile/exit?sid
+​	URL:	/profile/exit?uid
 
-​	方法:	GET
+​	参数：	uid=xxxx
+
+​	方法:	POST
 
 ​	返回:	字符串 1，退出成功； 字符串0失败
 
 
 
-## 详情页
+## 详情页    ok
 
-### 详情页
+### 详情页 ok
 
 ​	概述：	进入详情页 
 
-​	URL：	/detail/？sid
+​	URL：	/detail？sid
 
-​	
+​	进入    访问 /detail 路由时， shop_browser 表会插入
 
-### 收藏功能
+### 收藏功能 ok
 
 ​	URL：	/detail/collect？uid=xx & sid=xxx
 
@@ -316,11 +338,11 @@
 
 ​	返回：	字符串1， 收藏成功； 字符串0未知错误 500； 字符串-1 400请登录
 
-### 	点赞功能
+### 	点赞功能 ok
 
 ​	概括：	点赞。因为是 放入数据，所以用POST
 
-​	URL：	/detail/like
+​	URL：	/detail/like？sid=xxxxlike=true|false&  商家ID
 
 ​	方法：	POST
 
@@ -328,15 +350,17 @@
 
 ​	说明， like=true | false   true说明 是点赞.   false 说明取消点赞   。注意这时  字符串
 
-​		
+​	返回：  字符串1， 操作成功。 字符串 0 操作失败（重复操作）
 
 ​	数据表：  新建一个 shop_like 表
 
-​	还有一种思路是， 这个路由里，然后更新 商家表中的相关字段。
+​	还有一种思路是， 这个路由里，然后更新 商家表中的相关字段。耦合度高 不太好
 
-### 	头部
 
-​	概括：	商家名、评分、评价人数、点赞人数、是否点赞、是否收藏、展示图片、餐厅。因为是拿数据  所以用GET，语义明确。
+
+### 	头部    ok
+
+​	概括：	商家名、评分、评价人数、点赞人数、 是否点赞、是否收藏、展示图片、餐厅。因为是拿数据  所以用GET，语义明确。
 
 ​	URL：	/detail/top?sid=xxxxx & uid=xxxx
 
@@ -370,7 +394,7 @@
 
 
 
-### 菜品展示
+### 菜品展示  ok
 
 ​	概括：	用来获取 商家的菜品列表
 
@@ -386,7 +410,7 @@
         mname: '菜名',
         mprice: '价格',
         mimg: '菜的图片URL'
-        mid： 
+        mid：    mid
     }
 ]
 ```
@@ -395,27 +419,35 @@
 
 ​	
 
-### 	预定[功能]
+### 	预定[功能]   ok
 
-​	shop_order 表
+​	URL：	detail/order/add ? sid=xxxx & uid=xxx & mid=xx & time=xxx
+
+​	
+
+​	方法:	POST
+
+​	
+
+​	弹出一个 框，让选择日期。 对这个日期要有限制：
+
+​	1、若当前时间是 12：00 之前，则可以预定晚上的；否则 只能预定明天的。
+
+​	2、也不能预定太远的。
+
+​	
+
+​	返回:  字符串1 预定成功.   字符串 0, 重复预定.   字符串 -1 请不要省略时间
 
 
 
-### 取消预定
-
-​	返回： 200，说明取消预约成功
-
-​	返回： 400， 说明时间超时
-
-​		返回 500，说明程序出错
 
 
-
-### 评论展示
+### 评论展示  ok
 
 ​	概述：	获取评论
 
-​	URL：	/detail/comment？sid=xxx
+​	URL：	/detail/comment？sid=xxx  分页
 
 ​	方法：	GET
 
@@ -454,17 +486,15 @@
 
 ​	URL:	/comment?sid=xxxx & uid=xxx
 
-​	参数:	 comment=xxxx & **imglist**=二进制  必须得用 content-type: multipart/form-data
+​	参数:	score=xxx & content=xxxx & **imglist**=二进制  必须得用 content-type: multipart/form-data    4张
 
 ​	方法:	POST
 
-
-
-​	不足:	用户上传的图片大小，没有做限制。
+`
 
 ​	返回： 500错误， 图片过大 ， 不超过 5MB 或者 程序有误。
 
-
+​	字符串1, ok.    其他错误, 请重试
 
 ​	
 
@@ -967,3 +997,8 @@ currenttime,   这个
 
 
 
+# 任务
+
+​	陈梦佳： 详情页的 字体图标
+
+​	发表评论。
