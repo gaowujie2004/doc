@@ -153,8 +153,14 @@
 ```javascript
 [
     {
-        name: '商家名字',
-        ......
+        sid: 'sid'
+        content: '关键字'
+        shopname: '商家名字',
+        scanteen: '餐厅'
+        slogo: 'logo 图片URL',
+        slogan: '标语',
+        score: '评分',
+        reserve: '月预定量'
     },
     {},
     {},
