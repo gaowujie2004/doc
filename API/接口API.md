@@ -19,6 +19,9 @@
 ​	如果硬要找出.    元素相对比较光一点 , 包括标签名呀  ,  属性 和属性值.  标签的感觉旧相对来说 更窄一些,  就是指 div  h1 p 这些
 
 ```javascript
+
+
+
 [
     {
         sid: '商家ID',        ok
@@ -40,6 +43,8 @@
 ​	， 去 shop_category  shop_menu 表中找.   都没有找到去,   商家表中 找店名
 
 ​	背后的逻辑是:   查找 shopname \  content (shop_category)  然后以 sid 分组. 目的是防止重复.
+
+
 
  
 
@@ -109,7 +114,7 @@
 
 ### 预定 TOP榜 [本月]   
 
-​	URL:	/home/reservetop
+​	URL:	/home/reservetop？page =xx & num=xxx &month=xxx （11|12） 为了方便测试
 
 ​	方法:  GET
 
@@ -119,7 +124,7 @@
 
 ```javascript
 [
-    {},    // 商品列表里的东西
+    {},    // 商品列表里的东西。   稍微有点不一样
     {},
     ......
 ]
@@ -179,19 +184,27 @@
 
 
 
+​	URL:   order/   用来返回页面
+
+
+
 ​	操作  shop_order 表
 
 ​	概括: 	这个路由是用来查看用户预定的有哪些菜
 
-​	URL：	/order
+​	URL：	/order/all
 
-​	参数:	uid=xxx 用户ID    & page=1 & num=5
+​	参数:	uid=xxx 用户ID    & page=1 & num= 50
 
 ​	方法: 	GET
 
 ​	返回示例:	结构类似于 商家版-订单管理 
 
-​	isremove    是否能取消预约？
+
+
+​	isremove    是否能取消预约?
+
+​	iscomment  是否能评论?
 
 ```javascript
 [	  
@@ -202,6 +215,10 @@
     "mname": ‘菜名’，
     "shopname":  '商家名'
     "canteen": '餐厅'
+    
+    isremove    是否可以 取消订单
+    iscomment    是否 评论
+    img: '图片.  菜的图片'
 ]
 ```
 
@@ -231,7 +248,30 @@
 
 
 
+### 评价功能
+
+​	URL:    /comment/add?sid=xxx
+
+​	方法: POST
+
+​	状态码 < 300 都成功.
+
+
+
 ## 我的 ok
+
+
+
+​		/profile/info?uid  获取信息
+
+```
+{
+	img: '/public/....',
+	nickname: 'xxxx',
+}
+```
+
+
 
 
 
@@ -340,9 +380,11 @@
 
 ​	方法：	POST
 
-​	参数：	？uid=xx & sid=xxx
+​	参数：	？uid=xx & sid=xxx   
 
 ​	返回：	字符串1， 收藏成功； 字符串0未知错误 500； 字符串-1 400请登录
+
+
 
 ### 	点赞功能 ok
 
@@ -352,11 +394,15 @@
 
 ​	方法：	POST
 
-​	参数：	sid=xxxxlike=true|false&  商家ID
+​	参数：	sid=xxxxlike=true|false&  商家ID  uid=xx
 
 ​	说明， like=true | false   true说明 是点赞.   false 说明取消点赞   。注意这时  字符串
 
 ​	返回：  字符串1， 操作成功。 字符串 0 操作失败（重复操作）
+
+​					-1 未登录
+
+
 
 ​	数据表：  新建一个 shop_like 表
 
@@ -384,8 +430,9 @@
         shopname: '天下好面',
         score:   '评分'                // shop_comment 表
         commentNum: '评论人数'          // shop_comment
-        isLike:  1|0                    // 是否点赞  // shop_like
-        isCollect: 1|0                  // 是否收藏
+        likeNum: 点赞人数
+        isLike:  true|false                   // 是否点赞  // shop_like
+        isCollect: true|false                  // 是否收藏
         showList: ['http://', 'http://']    // shop_show
 		canteen：  '哪个餐厅'
     }
@@ -473,6 +520,8 @@
             score: '评分',
             content: '内容',
             imglist: '评论的图片列表'
+            
+            response: '商家回复'
         },
 
         {
@@ -537,11 +586,21 @@
 
 ​	概括:   这个 接口用来验证   用户名是否重复	
 
-​	URL:   /user/sigin?uname=xxxxx
+​	URL:   /user/sigincheck?uname=xxxxx
 
 ​	方法:  POST
 
-​	返回:  字符串 1代表用户名没有重复,    0代表用户名重复
+​	返回:  字符串 1代表用户名没有重复,    
+
+0代表用户名重复   404 状态码
+
+
+
+​	6 - 12 个长度    用户名
+
+​	2 - 6 昵称
+
+​	密码长度 6 - 16
 
 ​	
 
@@ -553,9 +612,15 @@
 
 ​	方法:	POST
 
-​	参数:	uname=xxxxx&upwd=xxxxxx
+​	参数:	uname=xxxxx&upwd=xxxxxx   
 
-​	返回:	字符串 1代表插入成功(注册成功),    0代表重新注册
+​					uname 
+
+​					unickname
+
+​				     upwd 
+
+​	返回:	字符串 1代表插入成功(注册成功),    0代表重新注册 400
 
 ​	安全：	为了安全起见， 把 uname 设置为 唯一约束
 
@@ -581,13 +646,19 @@
 
 ## 注册用户名判断
 
-​	URL： /user/sigincheck?mname
+​	URL： /user/sigincheck?sname
 
 ​	方法： GET
 
-​	参数:    mname=xxxx
+​	参数:    sname=xxxx
 
 ​	返回： 字符串1代表用户名可以使用。    0代表不能使用
+
+
+
+​	logo  字段
+
+​    showList  字段
 
 
 
@@ -597,27 +668,45 @@
 
 ​	URL:  /user/sigin
 
+​	方法:  POST
+
 ​	
 
-​	方法: POST
+​	sname,      账号用户名   6 - 20
 
-​	返回:   字符串1代表插入成功(注册成功),   0反之
+​	spwd,        密码     6- 20
+
+​	shopname,         2- 10 位
+
+​	scanteen,            3 -  10位
+
+​	slogo,                  
+
+​	slogan,                 25 个字符  
+
+​	当这些条件  都满足时 才能提交给后台.   
 
 
+
+ 商家名字 2- 10 位
+
+返回:   字符串1代表插入成功(注册成功	1),   0反之
 
 ## 登录
 
-​	URL： /user/login
+​	URL： /user/login 
 
 ​	方法： POST
 
 ​	返回： 字符串1代表登录成功，0反之
 
+​	
+
+​	小威做.    用 vue .   登录 +  注册  +  提示首页
+
 
 
 ## 首页
-
-高武杰做
 
 ### 查看操作
 
@@ -763,10 +852,6 @@
 
 ## 订单管理
 
-陈梦佳,  shop_order   订单表是空的,   得自己手动模拟数据 .
-
-currenttime,   这个
-
 ### 查看-默认显示今天的订单 
 
 ​	概括： 返回该商家的，按菜的名字分组 - 今天 - 昨天- 啥时候的订单都可以看
@@ -828,8 +913,6 @@ currenttime,   这个
 
 
 ## 菜品管理 
-
-李小威
 
 #### 查看
 
@@ -896,8 +979,6 @@ currenttime,   这个
 
 ## 评论管理
 
-张磊
-
 ### 	查看
 
 ​		URL： /comment?sid=xxx
@@ -956,8 +1037,6 @@ currenttime,   这个
 
 ## 商家信息
 
-李阳做
-
 
 
 #### 查看
@@ -981,7 +1060,7 @@ currenttime,   这个
 ```javascript
 {
     shopname: '天下好面'，
-    。。。。。。
+   	
 }
 ```
 
@@ -1008,3 +1087,170 @@ currenttime,   这个
 ​	陈梦佳： 详情页的 字体图标
 
 ​	发表评论。
+
+​	
+
+
+
+# 问题
+
+index.html   预定榜我是弄的月  需要修改
+
+默认是当前月的
+
+http://192.168.43.128:2021/home/reservetop?month=11
+
+还有就是 月预定量  我弄的也是 11月的数据.
+
+
+
+搜索的字符串    如果是 null  或 undefined 字符串.   还是就是空的 就过滤掉.
+
+详情页 - 预约日期  -  只能预约 近以后 7天的时间呢   并且标注  早上  中午  晚上.
+
+
+
+​	Vue 不用脚手架环境 --- 怎么用哪些插件呢。
+
+
+
+
+
+​	让他们把 所以的静态页面写完。 
+
+​	不要动态的东西。  
+
+
+
+ 为了方便测试   我把  reservetop 这个接口的  月约定量。    用一个  month 问号传参
+
+我还是在 停留在之前的思想上,     对于当前这个项目.   使用 Layui  +  原生 基本可以搞定.
+
+但是  我既然使用的 前后端分离 layui这样 没有 Vue爽
+
+
+
+还有就是  数据库的 SQL 语句,   以后要考虑优化,  多使用联表.   
+
+左连接  右连接  内连接  其实就是  增加 字段.      而   untion 是增加记录.
+
+
+
+
+
+之后   培训后  用 Vue 小程序做一遍.     在用 MongoDB做一遍.
+
+现在就是 如果使用 Vue,  那么 像 懒加载  流加载  弹出层  这些东西  应该是有人专门写的有.  在工作中能快速开发.
+
+
+
+总之  这个项目我认为能做的很大.   唯一不足的是 确实 UI设计师.   对于 字体大小  各种颜色   以及边距  都是自己看着感觉写的.
+
+还有就是  用习惯了  flex ,  有些文字块 文字过多会溢出,  这就很头疼了.
+
+
+
+
+
+有些表中  没有必要需要 主键
+
+   
+
+express-session    放到 全局中.   app.use()  不太好.   这样搜索的请求都会让这个中间件函数执行
+
+session 还得深入理解啊.   
+
+就是      cookie 中如果 有  sessionID  和   服务器的 匹配上了  那么 这块内存数据 就和 这个关联.
+
+如果   一个请求cookie 中没有 sessionID 那么 怎么办?   后端生成一个?
+
+让我疑惑的是   销毁 Session,   是销毁.  它怎么知道 销毁那个 session内存呢?
+
+
+
+中间件   app.use(fn1,  fn2 , fn3)
+
+​				app.use(fn4,  fn5,  fn6)  执行顺序
+
+
+
+查询 query这个函数  应该把 错误也封装一下.  要不然 太麻烦了. 
+
+
+
+复杂CORS请求.
+
+
+
+Mysql  事件格式的问题   在 连接的时候   timezone: 'Asia/Shanghai'  要有这个字段
+
+
+
+# 用户体验
+
+​	进入 详情页看完后 返回到首页,  我想 保留之前的位置.        另外 支持回到顶部.
+
+​	tabbar 肯定不能像我这样设计.   还是前端路由的思路好
+
+
+
+​	考虑 做个  单个菜品的描述。 有商家描述（标语 ）和菜的标语
+
+
+
+# 代码优化
+
+​		node中,   用 try  catch 显的不太美观.  
+
+​		还有就是  mysql 查询时的错误.   要封装一下,  要不然每一次都是 手写太麻烦了.  
+
+# 总结
+
+疑问:  为啥我写CSS 会感觉很慢 很累呢   
+
+
+
+如果写CSS的时候 没有考虑到  以后的扩展性  以及一些东西   写起来如果稍微大的话  会很吃力.
+
+CSS 方面,    既然是样式  那得想好  类名这些  还有 就是 边距   字体大小  行高   什么字体   颜色(最重要   各种颜色).  找到页面的 共同特点  也要会处理 特殊的.
+
+
+
+没有用 前端工程师化工具做.   没有用前端路由  好麻烦 页面跳转  新建html文件  引入的文件和别的都很类似  每一次新建个 html文件 都得引入一样的 非常麻烦. 繁琐
+
+
+
+mysql  插入 和 删除 results 是 OkPacket {      
+  fieldCount: 0,
+  affectedRows: 1,
+  insertId: 12,
+  serverStatus: 2,
+  warningCount: 0,
+  message: '',
+  protocol41: true,
+  changedRows: 0
+}   这样一个对象   
+
+还有就是   fields 这个参数是啥呢?
+
+
+
+弹出层.    需要自己在空闲的时候 研究研究.
+
+项目做完  这些Sql语句肯定要重新优化.     表结构也可以再优化优化. 等一切OK.   开始尝试  MongdoDB
+
+
+
+
+
+# 商家版
+
+​	商家 infoRouter 路由 不行
+
+​	商家菜单管理  menuRouter 不行
+
+​	是不是在  app使用了  urlencoed 中间件 解决 req.body  ?
+
+
+
+更改商家信息  能换哪些信息?         Logo   标语    图片展示列表
